@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>e414de03-15c0-42f6-ae8b-8af4b4370408</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/92288740-be22-448e-b3a1-697c0535e005/resourcegroups/henning-bcdr/providers/microsoft.insights/components/adxbcdrtest</ApplicationInsightsResourceId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
+    <PackageReference Include="Microsoft.Azure.Kusto.Cloud.Platform" Version="8.0.9" />
+    <PackageReference Include="Microsoft.Azure.Kusto.Data" Version="8.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+
+</Project>

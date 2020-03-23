@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
-    <PackageReference Include="Microsoft.Azure.Kusto.Cloud.Platform" Version="8.0.9" />
-    <PackageReference Include="Microsoft.Azure.Kusto.Data" Version="8.0.9" />
+    <PackageReference Include="Microsoft.Azure.Kusto.Cloud.Platform" Version="8.1.0" />
+    <PackageReference Include="Microsoft.Azure.Kusto.Data" Version="8.1.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,7 +15,7 @@ namespace BcdrTestAppADX.ADX
     {
         public ICslQueryProvider adx;
 
-        public KustoConnectionStringBuilder connection;
+        public KustoConnectionStringBuilder _connection;
 
         private String _clientRequestIdPrefix;
 
@@ -27,9 +27,17 @@ namespace BcdrTestAppADX.ADX
         {
             _clientRequestIdPrefix = clientRequestIdPrefix;
 
-            connection = new KustoConnectionStringBuilder(adxUrl).WithAadManagedIdentity(authentication.ManagedIdentity);
+            if(String.IsNullOrEmpty(authentication.ManagedIdentity))
+            {
+                _connection = new KustoConnectionStringBuilder(adxUrl)
+                    .WithAadApplicationKeyAuthentication(authentication.ServicePrincipal.ClientId, authentication.ServicePrincipal.ClientSecret, authentication.ServicePrincipal.TenantId);
+            }
+            else
+            {
+                _connection = new KustoConnectionStringBuilder(adxUrl).WithAadManagedIdentity(authentication.ManagedIdentity);
+            }
 
-            adx = KustoClientFactory.CreateCslQueryProvider(connection);
+            adx = KustoClientFactory.CreateCslQueryProvider(_connection);
 
             _timer = new System.Threading.Timer(
                 e => CheckUsability(),

@@ -27,7 +27,9 @@ namespace BcdrTestAppADX.ADX
 
             _secondaries = new List<AdxClient>();
 
-            foreach (var aSecondaryUrl in setting.SecondaryAdx)
+            var secondaryAdx = setting.SecondaryAdx.Split(';');
+
+            foreach (var aSecondaryUrl in secondaryAdx)
             {
                 _secondaries.Add(new AdxClient(aSecondaryUrl, "BCDR-secondary-", setting.Authentication));
             }

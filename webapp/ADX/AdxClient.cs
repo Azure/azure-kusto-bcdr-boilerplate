@@ -93,6 +93,27 @@ namespace BcdrTestAppADX.ADX
             return null;
         }
 
+        public async Task<IDataReader> ExecuteQueryAsync(String dbName, string query, TelemetryClient telemetry)
+        {
+            if (_isUsable)
+            {
+                ClientRequestProperties clientRequestProperties = CreateRequestProperties();
+
+                try
+                {
+                    return await Task.Run(() => adx.ExecuteQueryAsync(dbName, query, clientRequestProperties));
+                }
+                catch (Exception ex)
+                {
+                    telemetry.TrackException(ex);
+                }
+
+                _isUsable = false;
+            }
+
+            return null;
+        }
+
         private ClientRequestProperties CreateRequestProperties()
         {
             var queryParameters = new Dictionary<String, String>()

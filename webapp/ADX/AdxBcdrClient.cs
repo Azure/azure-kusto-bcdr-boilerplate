@@ -27,7 +27,7 @@ namespace BcdrTestAppADX.ADX
 
             _secondaries = new List<AdxClient>();
 
-            var secondaryAdx = setting.SecondaryAdx.Split(';');
+            var secondaryAdx = setting.SecondaryAdx.Split(';').Select(_ => _.Trim());
 
             foreach (var aSecondaryUrl in secondaryAdx)
             {
@@ -37,7 +37,45 @@ namespace BcdrTestAppADX.ADX
 
         public IDataReader ExecuteQuery(String dbName, string query, TelemetryClient telemetry)
         {
-            IDataReader result = ExecuteQuery_internal(_primary, dbName, query, telemetry, _primaryProperties);
+            var result = ExecuteQuery_internal(_primary, dbName, query, telemetry, _primaryProperties);
+
+            if (result != null && !result.IsFaulted)
+            {
+                return result.Result;
+            }
+            else
+            {
+                List<Task<IDataReader>> tasks = new List<Task<IDataReader>>();
+
+                foreach (var aADXClient in _secondaries)
+                {
+                    tasks.Add(Task.Run(() => ExecuteQuery_internal(aADXClient, dbName, query, telemetry, _secondaryProperties)));
+                }
+
+                return Task.WhenAll(tasks).Result.Where(_ => _ != null).FirstOrDefault();
+            }
+        }
+
+        private async Task<IDataReader> ExecuteQuery_internal(AdxClient aADXClient, string dbName, string query, TelemetryClient telemetry, Dictionary<string, string> telemetryProperties)
+        {
+            var result = await aADXClient.ExecuteQueryAsync(dbName, query, telemetry);
+
+            if (result != null)
+            {
+                telemetry.TrackEvent("adxSuccessfulQuery", telemetryProperties);
+            }
+            else
+            {
+                telemetry.TrackEvent("adxFailedQuery", telemetryProperties);
+            }
+
+            return result;
+        }
+
+        
+        public async Task<IDataReader> ExecuteQueryAsync(String dbName, string query, TelemetryClient telemetry)
+        {
+            var result = await ExecuteQuery_internal(_primary, dbName, query, telemetry, _primaryProperties);
 
             if (result != null)
             {
@@ -54,22 +92,6 @@ namespace BcdrTestAppADX.ADX
 
                 return Task.WhenAll(tasks).Result.Where(_ => _ != null).FirstOrDefault();
             }
-        }
-
-        private IDataReader ExecuteQuery_internal(AdxClient aADXClient, string dbName, string query, TelemetryClient telemetry, Dictionary<string, string> telemetryProperties)
-        {
-            var result = aADXClient.ExecuteQuery(dbName, query, telemetry);
-
-            if (result != null)
-            {
-                telemetry.TrackEvent("adxSuccessfulQuery", telemetryProperties);
-            }
-            else
-            {
-                telemetry.TrackEvent("adxFailedQuery", telemetryProperties);
-            }
-
-            return result;
         }
     }
 }

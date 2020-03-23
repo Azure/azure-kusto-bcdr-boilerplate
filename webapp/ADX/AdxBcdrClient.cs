@@ -45,14 +45,7 @@ namespace BcdrTestAppADX.ADX
             }
             else
             {
-                List<Task<IDataReader>> tasks = new List<Task<IDataReader>>();
-
-                foreach (var aADXClient in _secondaries)
-                {
-                    tasks.Add(Task.Run(() => ExecuteQuery_internal(aADXClient, dbName, query, telemetry, _secondaryProperties)));
-                }
-
-                return Task.WhenAll(tasks).Result.Where(_ => _ != null).FirstOrDefault();
+                return ExecuteQuery_internal_secondaries(dbName, query, telemetry);
             }
         }
 
@@ -83,15 +76,20 @@ namespace BcdrTestAppADX.ADX
             }
             else
             {
-                List<Task<IDataReader>> tasks = new List<Task<IDataReader>>();
-
-                foreach (var aADXClient in _secondaries)
-                {
-                    tasks.Add(Task.Run(() => ExecuteQuery_internal(aADXClient, dbName, query, telemetry, _secondaryProperties)));
-                }
-
-                return Task.WhenAll(tasks).Result.Where(_ => _ != null).FirstOrDefault();
+                return ExecuteQuery_internal_secondaries(dbName, query, telemetry);
             }
+        }
+
+        private IDataReader ExecuteQuery_internal_secondaries(string dbName, string query, TelemetryClient telemetry)
+        {
+            List<Task<IDataReader>> tasks = new List<Task<IDataReader>>();
+
+            foreach (var aADXClient in _secondaries)
+            {
+                tasks.Add(Task.Run(() => ExecuteQuery_internal(aADXClient, dbName, query, telemetry, _secondaryProperties)));
+            }
+
+            return Task.WhenAll(tasks).Result.Where(_ => _ != null).FirstOrDefault();
         }
     }
 }

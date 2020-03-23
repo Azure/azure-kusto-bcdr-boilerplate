@@ -25,6 +25,8 @@ namespace BcdrTestAppADX.Controllers
         [HttpGet]
         public int Get()
         {
+            _logger.LogDebug("Snyc call");
+
             string query = $@"Analytics_Anomaly()";
 
             Stopwatch sw = Stopwatch.StartNew();
@@ -41,7 +43,6 @@ namespace BcdrTestAppADX.Controllers
 
                 while (result.Read())
                 {
-                    var value = result.GetValue(1);
                     resultCount++;
                 }
 

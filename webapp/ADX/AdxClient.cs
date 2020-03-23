@@ -17,9 +17,9 @@ namespace BcdrTestAppADX.ADX
 
         public KustoConnectionStringBuilder _connection;
 
-        private String _clientRequestIdPrefix;
+        private readonly String _clientRequestIdPrefix;
 
-        private Timer _timer;
+        private readonly Timer _timer;
 
         private bool _isUsable = true;
 
@@ -27,7 +27,7 @@ namespace BcdrTestAppADX.ADX
         {
             _clientRequestIdPrefix = clientRequestIdPrefix;
 
-            if(String.IsNullOrEmpty(authentication.ManagedIdentity))
+            if (String.IsNullOrEmpty(authentication.ManagedIdentity))
             {
                 _connection = new KustoConnectionStringBuilder(adxUrl)
                     .WithAadApplicationKeyAuthentication(authentication.ServicePrincipal.ClientId, authentication.ServicePrincipal.ClientSecret, authentication.ServicePrincipal.TenantId);
@@ -123,11 +123,12 @@ namespace BcdrTestAppADX.ADX
                 // { "xDoubleValue", "11.1" }
             };
 
-            var clientRequestProperties = new Kusto.Data.Common.ClientRequestProperties(
+            var clientRequestProperties = new ClientRequestProperties(
                 options: null,
-                parameters: queryParameters);
-
-            clientRequestProperties.ClientRequestId = _clientRequestIdPrefix + Guid.NewGuid().ToString();
+                parameters: queryParameters)
+            {
+                ClientRequestId = _clientRequestIdPrefix + Guid.NewGuid().ToString()
+            };
             return clientRequestProperties;
         }
     }

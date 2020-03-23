@@ -72,7 +72,7 @@ namespace BcdrTestAppADX.ADX
             return result;
         }
 
-        
+
         public async Task<IDataReader> ExecuteQueryAsync(String dbName, string query, TelemetryClient telemetry)
         {
             var result = await ExecuteQuery_internal(_primary, dbName, query, telemetry, _primaryProperties);

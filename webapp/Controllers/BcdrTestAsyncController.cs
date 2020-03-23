@@ -2,7 +2,6 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -26,6 +25,8 @@ namespace BcdrTestAppADX.Controllers
         [HttpGet]
         public async Task<int> Get()
         {
+            _logger.LogDebug("Asnyc call");
+
             string query = $@"Analytics_Anomaly()";
 
             Stopwatch sw = Stopwatch.StartNew();
@@ -42,7 +43,6 @@ namespace BcdrTestAppADX.Controllers
 
                 while (result.Read())
                 {
-                    var value = result.GetValue(1);
                     resultCount++;
                 }
 
